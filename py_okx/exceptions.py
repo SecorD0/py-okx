@@ -3,7 +3,15 @@ from typing import Optional
 import requests
 
 
-class OKXAPIException(Exception):
+class OKXClientException(Exception):
+    pass
+
+
+class InvalidProxy(OKXClientException):
+    pass
+
+
+class APIException(OKXClientException):
     """
     An exception that occurs when the API is accessed unsuccessfully.
 

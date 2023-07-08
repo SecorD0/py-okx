@@ -16,23 +16,32 @@ class Base:
     The base class for all section classes.
 
     Attributes:
-        entrypoint_url: an entrypoint URL.
+        entrypoint_url (str): an entrypoint URL.
+        proxy (Dict[str, str]): an HTTP or SOCKS5 IPv4 proxy dictionary.
 
     """
     __credentials: OKXCredentials
     entrypoint_url: str
+    proxy: Optional[Dict[str, str]]
 
-    def __init__(self, credentials: OKXCredentials, entrypoint_url: str) -> None:
+    def __init__(self, credentials: OKXCredentials, entrypoint_url: str, proxy: Optional[str]) -> None:
         """
         Initialize the class.
 
         Args:
             credentials (OKXCredentials): an instance with all OKX API key data.
             entrypoint_url (str): an API entrypoint url.
+            proxy (Optional[str]): an HTTP or SOCKS5 IPv4 proxy in one of the following formats:
+                - login:password@proxy:port
+                - http://login:password@proxy:port
+                - socks5://login:password@proxy:port
+                - proxy:port
+                - http://proxy:port
 
         """
         self.__credentials = credentials
         self.entrypoint_url = entrypoint_url
+        self.proxy = proxy
 
     @staticmethod
     def get_timestamp() -> str:
@@ -101,13 +110,15 @@ class Base:
             'OK-ACCESS-PASSPHRASE': self.__credentials.passphrase
         }
         if method == Methods.POST:
-            response = requests.post(url, headers=header, data=json.dumps(body) if isinstance(body, dict) else body)
+            response = requests.post(
+                url, headers=header, proxies=self.proxy, data=json.dumps(body) if isinstance(body, dict) else body
+            )
 
         else:
-            response = requests.get(url, headers=header)
+            response = requests.get(url, headers=header, proxies=self.proxy, timeout=30)
 
         json_response = response.json()
         if int(json_response.get('code')):
-            raise exceptions.OKXAPIException(response=response)
+            raise exceptions.APIException(response=response)
 
         return json_response

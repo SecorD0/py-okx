@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from py_okx.OKXClient import OKXClient
-from py_okx.models import OKXCredentials, Chains, WithdrawalType, WithdrawalTypes, WithdrawalStatuses
+from py_okx.models import OKXCredentials, Chains
 
 
 class Asset:
@@ -75,7 +75,9 @@ if __name__ == '__main__':
         passphrase=str(os.getenv('PASSPHRASE')) if os.getenv('PASSPHRASE') else ''
     )
     if credentials.completely_filled():
-        okx_client = OKXClient(credentials=credentials, entrypoint_url=str(os.getenv('ENTRYPOINT_URL')))
+        okx_client = OKXClient(
+            credentials=credentials, entrypoint_url=str(os.getenv('ENTRYPOINT_URL')), proxy=str(os.getenv('PROXY'))
+        )
         toAddr = str(os.getenv('TO_ADDR'))
         wdId = str(os.getenv('WD_ID'))
 
