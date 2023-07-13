@@ -38,6 +38,13 @@ class Asset:
             print(f'{token_symbol}: {balance}')
 
     @staticmethod
+    def deposit_history() -> None:
+        print('\n--- deposit_history ---')
+        deposit_history = okx_client.asset.deposit_history()
+        for depId, deposit in deposit_history.items():
+            print(f'{depId}: {deposit}')
+
+    @staticmethod
     def withdrawal_history() -> None:
         print('\n--- withdrawal_history ---')
         withdrawal_history = okx_client.asset.withdrawal_history()
@@ -110,6 +117,7 @@ def main() -> None:
     asset = Asset()
     asset.currencies()
     asset.balances()
+    asset.deposit_history()
     asset.withdrawal_history()
     asset.withdrawal()
     asset.cancel_withdrawal()
