@@ -32,11 +32,13 @@ class OKXClient:
             credentials (OKXCredentials): an instance with all OKX API key data.
             entrypoint_url (str): an API entrypoint url. (https://www.okx.com)
             proxy (Optional[str]): an HTTP or SOCKS5 IPv4 proxy in one of the following formats:
+
                 - login:password@proxy:port
                 - http://login:password@proxy:port
                 - socks5://login:password@proxy:port
                 - proxy:port
                 - http://proxy:port
+
             check_proxy (bool): check if the proxy is working. (True)
 
         """
@@ -55,6 +57,9 @@ class OKXClient:
                     your_ip = requests.get('http://eth0.me/', proxies=self.proxy, timeout=10).text.rstrip()
                     if your_ip not in proxy:
                         raise InvalidProxy(f"Proxy doesn't work! Your IP is {your_ip}.")
+
+            except InvalidProxy:
+                pass
 
             except Exception as e:
                 raise InvalidProxy(str(e))
